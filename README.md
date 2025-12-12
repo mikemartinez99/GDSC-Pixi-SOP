@@ -49,7 +49,7 @@ To initialize a pixi environment you can run 1 of the following commands:
 
 1. `pixi init`: Creates a `pixi.toml` file *directly* in your project root. 
 
-2. `pixi init <name>: Creates a folder in your project root named as <name> where all pixi information (i.e., toml, lock, and other information) will live. (*recommended*)
+2. `pixi init env_name`: Creates a folder in your project root named as env_name where all pixi information (i.e., toml, lock, and other information) will live. (*recommended*)
 
 *note:* if option 2 is used, be sure to `cd` into the folder created by pixi to modify toml or add packages.
 
