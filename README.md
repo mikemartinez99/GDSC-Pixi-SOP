@@ -5,16 +5,12 @@
 **Date: December 12, 2025**
 
 **Purpose:** 
-
 To provide a standardized framework for implmenting and managing software environments for core projects using Pixi
 
 **Scope:** 
-
 This SOP applies to any projects where a reproducible environment is needed, including R, Python, command-line tools, and mixed-language workflows. Pixi may not be applicable for every project due to current limitations in support for Bioconductor tools (R) as of December 2025. 
 
-**Responsibilities:** 
 
-Initialization and management of environment should be done by the project owner. Collaborators within the core should be able to edit as needed. Clients receiving environments should receive the `pixi.toml` and `pixi.lock`.
 
 --------
 
@@ -33,6 +29,7 @@ Initialization and management of environment should be done by the project owner
     - [Adding RStudio Task](#adding-rstudio-task)
     - [Interative Installation](#interactive-installation)
     - [Task Installation](#task-installation)
+  - [Real Project Example](#real-project-example)
 
 **Definitions:**
 
@@ -327,7 +324,7 @@ You can add a task like this to your `toml` and execute:
 install-bioc = """
 Rscript -e '
 if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager");
+    install.packages("BiocManager", repos = "https://cloud.r-project.org");
 BiocManager::install(c("DESeq2", "GenomicRanges"), ask=FALSE)
 '
 """
@@ -337,10 +334,91 @@ BiocManager::install(c("DESeq2", "GenomicRanges"), ask=FALSE)
 Then run with `pixi run install-bioc`
 
 > [!IMPORTANT]
-> **If you set an installation task for bioconductor packages, it is imperative that you set `ask=FALSE` as bioconductor installations often prompt users for input regarding package version updates. If you do not do this, your script will time-out waiting for user input**
+> **If you set an installation task for bioconductor packages, it is imperative that you set `ask=FALSE` as bioconductor installations often prompt users for input regarding package version updates. If you do not do this, your script will time-out waiting for user input. The same is true for `repos = ...`**
 
 > [!WARNING]
 > **Pixi currently does not support bioconductor natively. Some bioconductor packages will work by either installing interactively or through a task, but not all are guarenteed to work (i.e., some bioconductor packages require dependencies that do not have binaries supported by pixi, so installations inherently fail). If this is the case, conda, or renv is a better alternative**
+
+
+## Real Project Example
+
+Below is an example for a basic differential expression project. After cloning the repo to our lab folder, I created a .Rproj file in the root. This was the process:
+
+1. Environment initialization
+
+```
+pixi init envs
+```
+
+2. Modification of `pixi.toml`
+
+Key additions include the following:
+
+- Under `workspace`, in the `platforms` filed, I Added both "osx=arm64" to facilitate functionality on my local machine when GMBSR is mounted, and `linux-64` to allow the builds on the HPC backend.
+
+- Under `workspace` in the `channels` field, I added bioconda to facilitate installation of bioconda packages
+
+- Under `tasks` I added `rstudio` which calls and activates my Rproj
+
+- Under `tasks` I added `install-bioc` which calls for the installation of bioconductor packages needed for this project.
+
+- Under `dependencies` I added all CRAN packages needed for this project.
+
+```
+[workspace]
+authors = ["Mike Martinez <mike.j.martinez99@gmail.com>"]
+channels = ["conda-forge", "bioconda"]
+name = "envs"
+platforms = ["osx-arm64", "linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+# Run RStudio project
+rstudio = "rstudio ./251201-Malaney-Lymphoma-Signature.Rproj"
+
+# Install bioconductor packages
+install-bioc = """
+Rscript -e '
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager", repos = "https://cloud.r-project.org");
+BiocManager::install(c("DESeq2", "apeglm", "annotationDbi", "org.Hs.eg.db", "clusterProfiler"), ask = FALSE)
+'
+"""
+
+
+[dependencies]
+r-base = "4.4.1"
+r-sessioninfo = "*"
+r-remotes = "*"
+r-devtools = "*"
+r-tidyverse = "*"
+r-dplyr = "*"
+r-tidyr = "*"
+"r-data.table" = "*"
+r-pheatmap = "*"
+r-ggplot2 = "*"
+r-ggpubr = "*"
+r-ggrepel = "*"
+r-RColorBrewer = "*"
+r-ggh4x = "*"
+
+```
+
+3. Install the environment (must be done on discovery, **NOT** on mounted directory (e.g., `/Volumes/`)
+
+```
+cd envs
+pixi install
+```
+
+4. Run the `install-bioc` task
+
+While the `pixi install` command is fast, this install will most likely take some time as it is installing through R and not pixi. 
+
+```
+pixi run install-bio
+```
 
 
 
