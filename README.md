@@ -383,15 +383,6 @@ version = "0.1.0"
 # Run RStudio project
 rstudio = "open -n -a Rstudio /Volumes/GMBSR_bioinfo/Labs/malaney/251201-Malaney-Lymphoma-Signature/251201-Malaney-Lymphoma-Signature.Rproj"
 
-# Install bioconductor packages
-install-bioc = """
-Rscript -e '
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager", repos = "https://cloud.r-project.org");
-BiocManager::install(c("apeglm", "annotationDbi", "org.Hs.eg.db", "clusterProfiler"), ask = FALSE)
-'
-"""
-
 # Install github packages
 install-git = """
 Rscript -e '
@@ -416,6 +407,10 @@ r-RColorBrewer = "*"
 r-ggh4x = "*"
 r-MatchIt = "*"
 bioconductor-deseq2="*"
+bioconductor-apeglm="*"
+bioconductor-clusterprofiler="*"
+bioconductor-annotationdbi="*"
+"bioconductor-org.hs.eg.db"="*"
 
 ```
 
@@ -429,15 +424,7 @@ cd envs
 pixi install
 ```
 
-4. Run the `install-bioc` task
-
-While the `pixi install` command is fast, this install will most likely take some time as it is installing through R and not pixi. 
-
-```
-pixi run install-bio
-```
-
-5. Run the `install-git` task
+4. Run the `install-git` task
 
 ```
 pixi run install-git
