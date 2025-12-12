@@ -257,6 +257,10 @@ You can also install packages through notebook blocks using Jupyters "!" syntax:
 
 ## Running RStudio With Pixi
 
+> [!IMPORTANT]
+> **Running RStudio through pixi is a bit more complicated. For starters, if you are running RStudio locally while referencing project paths from GMBSR as it is mounted (eg., from `/Volumes/`) your pixi environment **needs to be made locally, not on a Dartmouth HPC**. For this, I recommend having a folder somewhere on your mac called where project environments will be stored. This allows you to run RStudio locally and still document your project. Thank's to Pixi's multi-platform support, the environment can be replicated across machines and you can still use the networked folders on Discovery localled by mounting.**
+
+
 #### Adding RStudio Task
 
 To run RStudio through a pixi environment, add the following task to your `toml`
@@ -265,7 +269,7 @@ To run RStudio through a pixi environment, add the following task to your `toml`
 authors = ["mikemartinez99 <mike.j.martinez99@gmail.com>"]
 channels = ["conda-forge", "bioconda"]
 name = "alignment"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
@@ -344,9 +348,11 @@ Then run with `pixi run install-bioc`
 
 Below is an example for a basic differential expression project. After cloning the repo to our lab folder, I created a .Rproj file in the root. This was the process:
 
-1. Environment initialization
+1. Environment initialization from a **local** folder on your machine. Here, my folder lives in `/Users/mike/Desktop/GDSC/`
 
 ```
+cd /Users/mike/Desktop/GDSC/malaney/251201-Malaney-Lymphoma-Signature/
+mkdir envs && cd envs
 pixi init envs
 ```
 
@@ -375,7 +381,7 @@ version = "0.1.0"
 [tasks]
 
 # Run RStudio project
-rstudio = "rstudio ./251201-Malaney-Lymphoma-Signature.Rproj"
+rstudio = "rstudio /Volumes/GMBSR_bioinfo/Labs/malaney/251201-Malaney-Lymphoma-Signature.Rproj"
 
 # Install bioconductor packages
 install-bioc = """
@@ -405,7 +411,7 @@ r-ggh4x = "*"
 
 ```
 
-3. Install the environment (must be done on discovery, **NOT** on mounted directory (e.g., `/Volumes/`)
+3. Install the environment
 
 ```
 cd envs
