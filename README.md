@@ -392,6 +392,12 @@ BiocManager::install(c("DESeq2", "apeglm", "annotationDbi", "org.Hs.eg.db", "clu
 '
 """
 
+# Install github packages
+install-git = """
+Rscript -e '
+devtools::install_github("mikemartinez99/RGenEDA")
+'
+"""
 
 [dependencies]
 r-base = "4.4.1"
@@ -424,6 +430,12 @@ While the `pixi install` command is fast, this install will most likely take som
 
 ```
 pixi run install-bio
+```
+
+5. Run the `install-git` task
+
+```
+pixi run install-git
 ```
 
 
