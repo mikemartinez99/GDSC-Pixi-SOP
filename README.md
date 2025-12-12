@@ -84,7 +84,7 @@ The fields you will mostly edit are:
 
 - **dependencies**: Add software dependencies here, OR have them automatically updated if you install interactively. 
 
--**tasks:** define reproducible tasks (more on this below.)
+- **tasks:** define reproducible tasks (more on this below.)
 
 > [!IMPORTANT]
 > **Pixi has a dedicated `pypi-dependencies table to manage packages from PyPI**
