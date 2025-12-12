@@ -341,7 +341,7 @@ Then run with `pixi run install-bioc`
 > **If you set an installation task for bioconductor packages, it is imperative that you set `ask=FALSE` as bioconductor installations often prompt users for input regarding package version updates. If you do not do this, your script will time-out waiting for user input. The same is true for `repos = ...`**
 
 > [!WARNING]
-> **Pixi currently does not support bioconductor natively. Some bioconductor packages will work by either installing interactively or through a task, but not all are guarenteed to work (i.e., some bioconductor packages require dependencies that do not have binaries supported by pixi, so installations inherently fail). If this is the case, conda, or renv is a better alternative**
+> **Pixi currently does not support bioconductor natively. Some bioconductor packages will work by either installing interactively, or through a task, but not all are guarenteed to work. The best work around to have these packages installed and documented in the toml and lock is to find a bioconda recipie and install through the toml (see real world example below**
 
 
 ## Real Project Example
