@@ -375,20 +375,20 @@ Key additions include the following:
 authors = ["Mike Martinez <mike.j.martinez99@gmail.com>"]
 channels = ["conda-forge", "bioconda"]
 name = "envs"
-platforms = ["osx-arm64", "linux-64"]
+platforms = ["osx-arm64","linux-64"]
 version = "0.1.0"
 
 [tasks]
 
 # Run RStudio project
-rstudio = "open -a -n Rstudio /Volumes/GMBSR_bioinfo/Labs/malaney/251201-Malaney-Lymphoma-Signature/251201-Malaney-Lymphoma-Signature.Rproj"
+rstudio = "open -n -a Rstudio /Volumes/GMBSR_bioinfo/Labs/malaney/251201-Malaney-Lymphoma-Signature/251201-Malaney-Lymphoma-Signature.Rproj"
 
 # Install bioconductor packages
 install-bioc = """
 Rscript -e '
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager", repos = "https://cloud.r-project.org");
-BiocManager::install(c("DESeq2", "apeglm", "annotationDbi", "org.Hs.eg.db", "clusterProfiler"), ask = FALSE)
+BiocManager::install(c("apeglm", "annotationDbi", "org.Hs.eg.db", "clusterProfiler"), ask = FALSE)
 '
 """
 
@@ -414,8 +414,13 @@ r-ggpubr = "*"
 r-ggrepel = "*"
 r-RColorBrewer = "*"
 r-ggh4x = "*"
+r-MatchIt = "*"
+bioconductor-deseq2="*"
 
 ```
+
+> [!IMPORTANT]
+> **Bioconductor packages listed on bioconda can be accessed by using the `bioconductor-packageName` construct**
 
 3. Install the environment
 
