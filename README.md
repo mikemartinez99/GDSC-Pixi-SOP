@@ -30,6 +30,9 @@ Initialization and management of environment should be done by the project owner
   - [Defining Reproducible Tasks](#defining-reproducible-tasks)
   - [Using Pixi on VSCode for Python Projects](#using-pixi-on-vscode-for-python-projects)
   - [Running RStudio With Pixi](#running-rstudio-with-pixi)
+    - [Adding RStudio Task](#adding-rstudio-task)
+    - [Interative Installation](#interactive-installation)
+    - [Task Installation](#task-installation)
 
 **Definitions:**
 
@@ -124,7 +127,7 @@ pixi add --pypi "pixi add --pypi "mypkg @ git+https://github.com/myuser/myrepo.g
 ```
 
 > [!IMPORTANT]
-> **Installing R packages it a little more involved if the package is not hosted on CRAN. For more information on this, see the R installation instructions**
+> **Installing R packages it a little more involved if the package is not hosted on CRAN. For more information on this, see the [R installation instructions](#running-rstudio-with-pixi)**
 
 ## Activating the Environments 
 
@@ -257,7 +260,7 @@ You can also install packages through notebook blocks using Jupyters "!" syntax:
 
 ## Running RStudio With Pixi
 
-**Adding RStudio Task**
+#### Adding RStudio Task
 
 To run RStudio through a pixi environment, add the following task to your `toml`
 
@@ -297,7 +300,7 @@ pixi add r-Seurat
 
 However, R packages hosted on Github or Bioconductor are more challenging. There are a few options for how to go about installing these. 
 
-**Interative Installation**
+#### Interative Installation
 
 From within the RStudio window opened by running your `pixi run rstudio` task, you can install packages as you normally would:
 
@@ -314,7 +317,7 @@ This will make `GenomicRanges` present in your `.libPaths` which should look som
 
 However, this will not add `GenomicRanges` to your `toml` file. It will be useable in all sessions, it just will not be reflected in the file.
 
-**Task Installation**
+ #### Task Installation
 
 Task installation is helpful if you know exactly what packages you need and want to install everything in one shot. 
 
