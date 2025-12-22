@@ -1,8 +1,13 @@
-# Dartmouth Genomic Data Science Core - Pixi SOP
+<div align="center">
 
-**Author: Mike Martinez M.S.**
+# GDSC Pixi SOP  
+<img src="img/cqb_logo.jpg" width="160" height="90" alt="CQB Logo">
 
-**Date: December 12, 2025**
+</div>
+
+**Author**: Mike Martinez M.S.
+
+**Date Created**: December 12, 2025
 
 **Purpose:** 
 To provide a standardized framework for implmenting and managing software environments for core projects using Pixi, a versatile package manager that facilitates reproducibility across machines.
@@ -39,12 +44,9 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 
 | Term | Definition |
 |------|------------|
-|**`pixi.toml`**|Human-editable project configuration file that defines the workspace metadata, dependency requirements, supported platforms, and reproducible tasks. Serves as the single source of truth for the software environment.
-|
-|**`pixi.lock`**|Auto-generated lockfile that records the exact resolved package versions and build hashes for each platform, ensuring bit-for-bit reproducibility across systems and over time. Should be committed to version control.
-|
-|**workspace**| Section in pixi.toml that defines high-level project metadata, including project name, version, authors, Conda channels, and supported operating systems/platforms. Establishes the scope and identity of the project environment.
-|
+|**`pixi.toml`**|Human-editable project configuration file that defines the workspace metadata, dependency requirements, supported platforms, and reproducible tasks. Serves as the single source of truth for the software environment.|
+|**`pixi.lock`**|Auto-generated lockfile that records the exact resolved package versions and build hashes for each platform, ensuring bit-for-bit reproducibility across systems and over time. Should be committed to version control.|
+|**workspace**| Section in pixi.toml that defines high-level project metadata, including project name, version, authors, Conda channels, and supported operating systems/platforms. Establishes the scope and identity of the project environment.|
 |**channels**|Package repositories. For our use cases, most packages will be through `conda-forge`, `bioconda`|
 |**tasks**|Reproducible tasks that can be defined through the `toml`|
 |**dependencies**|Section in pixi.toml that specifies required software packages and version constraints (e.g., Python, R, bioinformatics tools). Pixi resolves these into concrete installs via the lockfile.|
@@ -58,7 +60,6 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 
 
 ## Local Installation
-
 
 To install Pixi, run this command:
 
@@ -504,6 +505,8 @@ pixi run install-git
 ```
 pixi run rstudio
 ```
+> [!IMPORTANT]
+> **Once a project is complete, ensure you transfer the `pixi.lock` and `pixi.toml` to the remote repository and push to Github project**
 
 ## Real Project Example in Python
 
