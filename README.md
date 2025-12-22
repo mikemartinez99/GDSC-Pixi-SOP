@@ -10,7 +10,7 @@ To provide a standardized framework for implmenting and managing software enviro
 **Scope:** 
 This SOP applies to any projects where a reproducible environment is needed, including R, Python, command-line tools, and mixed-language workflows. Pixi may not be applicable for every project due to current limitations in support for Bioconductor tools (R) as of December 2025 (see [Running RStudio with Pixi](#running-rstudio-with-pixi))
 
-
+[**Pixi Documentation**](https://pixi.prefix.dev/v0.62.1/)
 
 --------
 
@@ -39,9 +39,15 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 
 | Term | Definition |
 |------|------------|
-|**`pixi.toml`:**|Human-editable definition of dependencies and tasks.|
-|**`pixi.lock`:**|Frozen dependency versions ensuring bit-for-bit reproducibility.|
-
+|**`pixi.toml`**|Human-editable project configuration file that defines the workspace metadata, dependency requirements, supported platforms, and reproducible tasks. Serves as the single source of truth for the software environment.
+|
+|**`pixi.lock`**|Auto-generated lockfile that records the exact resolved package versions and build hashes for each platform, ensuring bit-for-bit reproducibility across systems and over time. Should be committed to version control.
+|
+|**workspace**| Section in pixi.toml that defines high-level project metadata, including project name, version, authors, Conda channels, and supported operating systems/platforms. Establishes the scope and identity of the project environment.
+|
+|**channels**|Package repositories. For our use cases, most packages will be through `conda-forge`, `bioconda`|
+|**tasks**|Reproducible tasks that can be defined through the `toml`|
+|**dependencies**|Section in pixi.toml that specifies required software packages and version constraints (e.g., Python, R, bioinformatics tools). Pixi resolves these into concrete installs via the lockfile.|
 
 
 # Installations and prerequisites
@@ -54,11 +60,12 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 ## Local Installation
 
 
-To install Pixi, run this command (Linux/macOS):
+To install Pixi, run this command:
+
+**(Linux/macOS):**
 
 ```
 curl -fsSL https://pixi.sh/install.sh | sh
-
 ```
 
 If your system does not use curl, you can use `wget` or `brew`
