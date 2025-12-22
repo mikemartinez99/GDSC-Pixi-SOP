@@ -5,10 +5,10 @@
 **Date: December 12, 2025**
 
 **Purpose:** 
-To provide a standardized framework for implmenting and managing software environments for core projects using Pixi
+To provide a standardized framework for implmenting and managing software environments for core projects using Pixi, a versatile package manager that facilitates reproducibility across machines.
 
 **Scope:** 
-This SOP applies to any projects where a reproducible environment is needed, including R, Python, command-line tools, and mixed-language workflows. Pixi may not be applicable for every project due to current limitations in support for Bioconductor tools (R) as of December 2025. 
+This SOP applies to any projects where a reproducible environment is needed, including R, Python, command-line tools, and mixed-language workflows. Pixi may not be applicable for every project due to current limitations in support for Bioconductor tools (R) as of December 2025 (see [Running RStudio with Pixi](#running-rstudio-with-pixi))
 
 
 
@@ -16,6 +16,9 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 
 # Table of Contents
 
+- [Installations and prerequisites](#installations-and-prerequisites)
+  - [Local installation](#local-installation)
+  - [Remote configuration](#remote-configuration)
 - [SOP](#sop)
   - [Initializing the Pixi Environment](#initializing-the-pixi-environment)
   - [Adding Software to the Environment](#adding-software-to-the-environment)
@@ -27,9 +30,10 @@ This SOP applies to any projects where a reproducible environment is needed, inc
   - [Using Pixi on VSCode for Python Projects](#using-pixi-on-vscode-for-python-projects)
   - [Running RStudio With Pixi](#running-rstudio-with-pixi)
     - [Adding RStudio Task](#adding-rstudio-task)
-    - [Interative Installation](#interactive-installation)
+    - [Bioconda Recipies](#bioconda-recipies)
     - [Task Installation](#task-installation)
-  - [Real Project Example](#real-project-example)
+  - [Real Project Example in R](#real-project-example-in-r)
+  - [Real Project Example in Python](#real-project-example-in-python)
 
 **Definitions:**
 
@@ -38,6 +42,51 @@ This SOP applies to any projects where a reproducible environment is needed, inc
 |**`pixi.toml`:**|Human-editable definition of dependencies and tasks.|
 |**`pixi.lock`:**|Frozen dependency versions ensuring bit-for-bit reproducibility.|
 
+
+
+# Installations and prerequisites
+
+
+> [!IMPORTANT]
+> **Pixi is already installed on Discovery in GMBSR's `shared-software` folder, but needs to be added to `$PATH`. Pixi needs to be installed *locally* for RStudio projects**
+
+
+## Local Installation
+
+
+To install Pixi, run this command (Linux/macOS):
+
+```
+curl -fsSL https://pixi.sh/install.sh | sh
+
+```
+
+If your system does not use curl, you can use `wget` or `brew`
+
+```
+wget -qO- https://pixi.sh/install.sh | sh
+```
+
+```
+brew install pixi
+```
+
+**Windows**
+
+```
+winget install prefix-dev.pixi
+```
+
+## Remote configuration
+
+Pixi is already installed on Discovery in the `shared-software` folder. To access it, it needs to be added to your `bashrc` path. 
+
+```
+echo 'export PATH="/dartfs-hpc/rc/lab/G/GMBSR_bioinfo/misc/shared-
+software:$PATH"' >> ~/.bashrc
+
+source ~/.bashrc
+```
 
 # SOP
 
@@ -80,7 +129,7 @@ pixi add samtools
 Example of Option B (from a text editor such as nano or bbedit).
 The fields you will mostly edit are:
 
--  **channels**:  Controls the channels packages are pulled from. Currently, pixi supports: conda-forge, bioconda, robostack, nvidia, pytorch. 
+- **channels**:  Controls the channels packages are pulled from. Currently, pixi supports: conda-forge, bioconda, robostack, nvidia, pytorch. 
 
 - **dependencies**: Add software dependencies here, OR have them automatically updated if you install interactively. 
 
@@ -258,7 +307,7 @@ You can also install packages through notebook blocks using Jupyters "!" syntax:
 ## Running RStudio With Pixi
 
 > [!IMPORTANT]
-> **Running RStudio through pixi is a bit more complicated. For starters, if you are running RStudio locally while referencing project paths from GMBSR as it is mounted (eg., from `/Volumes/`) your pixi environment **needs to be made locally, not on a Dartmouth HPC**. For this, I recommend having a folder somewhere on your mac called where project environments will be stored. This allows you to run RStudio locally and still document your project. Thank's to Pixi's multi-platform support, the environment can be replicated across machines and you can still use the networked folders on Discovery localled by mounting.**
+> **Running RStudio through pixi is a bit more complicated. For starters, if you are running RStudio locally while referencing project paths from GMBSR as it is mounted (eg., from `/Volumes/`) your pixi environment *needs to be made locally, not on a Dartmouth HPC*. For this, I recommend having a folder somewhere on your mac called where project environments will be stored. This allows you to run RStudio locally and still document your project. Thank's to Pixi's multi-platform support, the environment can be replicated across machines and you can still use the networked folders on Discovery localled by mounting.**
 
 
 #### Adding RStudio Task
@@ -299,43 +348,61 @@ Any packages installed within your session will be added to your pixi folder's R
 pixi add r-Seurat
 ```
 
-However, R packages hosted on Github or Bioconductor are more challenging. There are a few options for how to go about installing these. 
+R packages hosted on Github or Bioconductor can also be installed (with some caveats)
 
-#### Interative Installation
+#### Bioconda Recipies
 
-From within the RStudio window opened by running your `pixi run rstudio` task, you can install packages as you normally would:
+Bioconductor packages can be installed directly through the `toml` like a normal python package or CRAN package as long as they have a bioconda recipie. Bioconda needs to be specified as a channel. Bioconda recipies for R-bioconductor packages use the prefic `bioconductor-packagename> all lowercase. An example is below:
 
-```R
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+In this example, we install an R package from github, R packages from CRAN, and R packages from bioconductor (through bioconda)
 
-BiocManager::install("GenomicRanges")
 ```
+[dependencies]
+r-base = "4.4.1"
+r-sessioninfo = "*"
+r-remotes = "*"
+r-devtools = "*"
+r-tidyverse = "*"
+r-dplyr = "*"
+r-tidyr = "*"
+"r-data.table" = "*"
+r-pheatmap = "*"
+r-ggplot2 = "*"
+r-ggpubr = "*"
+r-ggrepel = "*"
+r-RColorBrewer = "*"
+r-ggh4x = "*"
+r-MatchIt = "*"
+bioconductor-deseq2="*"
+bioconductor-apeglm="*"
+bioconductor-clusterprofiler="*"    # Bioconda packages
+bioconductor-annotationdbi="*"
+"bioconductor-org.hs.eg.db"="*"
 
-This will make `GenomicRanges` present in your `.libPaths` which should look something like this:
-
-`/Volumes/GMBSR_bioinfo/labs/smith/260101_RNASeq/alignment/.pixi/envs/default/lib/R/library`
-
-However, this will not add `GenomicRanges` to your `toml` file. It will be useable in all sessions, it just will not be reflected in the file.
+```
 
  #### Task Installation
 
-Task installation is helpful if you know exactly what packages you need and want to install everything in one shot. 
+Task installation is helpful for packages that are only available on github repositories. 
 
-You can add a task like this to your `toml` and execute:
+You can add a task like this to your `toml` and execute it using `pixi run taskname`:
 
 ```
-install-bioc = """
+[tasks]
+
+# Run RStudio project
+rstudio = "open -n -a Rstudio /Volumes/GMBSR_bioinfo/Labs/malaney/251201-Malaney-Lymphoma-Signature/251201-Malaney-Lymphoma-Signature.Rproj"
+
+# Install github packages
+install-git = """
 Rscript -e '
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager", repos = "https://cloud.r-project.org");
-BiocManager::install(c("DESeq2", "GenomicRanges"), ask=FALSE)
+devtools::install_github("mikemartinez99/RGenEDA")
 '
 """
 
 ```
 
-Then run with `pixi run install-bioc`
+Then run with `pixi run install-git`
 
 > [!IMPORTANT]
 > **If you set an installation task for bioconductor packages, it is imperative that you set `ask=FALSE` as bioconductor installations often prompt users for input regarding package version updates. If you do not do this, your script will time-out waiting for user input. The same is true for `repos = ...`**
@@ -344,7 +411,7 @@ Then run with `pixi run install-bioc`
 > **Pixi currently does not support bioconductor natively. Some bioconductor packages will work by either installing interactively, or through a task, but not all are guarenteed to work. The best work around to have these packages installed and documented in the toml and lock is to find a bioconda recipie and install through the toml (see real world example below**
 
 
-## Real Project Example
+## Real Project Example in R
 
 Below is an example for a basic differential expression project. After cloning the repo to our lab folder, I created a .Rproj file in the root. This was the process:
 
@@ -360,15 +427,13 @@ pixi init envs
 
 Key additions include the following:
 
-- Under `workspace`, in the `platforms` filed, I Added both "osx=arm64" to facilitate functionality on my local machine when GMBSR is mounted, and `linux-64` to allow the builds on the HPC backend.
+- Under `workspace` in the `channels` field, I added `bioconda` to facilitate installation of bioconductor packages (R)
 
-- Under `workspace` in the `channels` field, I added bioconda to facilitate installation of bioconda packages
+- Under `tasks` I added `rstudio` which calls and activates my Rproj in a local RStudio window (for when I mount the cluster)
 
-- Under `tasks` I added `rstudio` which calls and activates my Rproj
+- Under `tasks` I added `install-git` which calls for the installation of packages only available through github
 
-- Under `tasks` I added `install-bioc` which calls for the installation of bioconductor packages needed for this project.
-
-- Under `dependencies` I added all CRAN packages needed for this project.
+- Under `dependencies` I added all CRAN, bioconda, and other packages needed for this project.
 
 ```
 [workspace]
@@ -414,9 +479,6 @@ bioconductor-annotationdbi="*"
 
 ```
 
-> [!IMPORTANT]
-> **Bioconductor packages listed on bioconda can be accessed by using the `bioconductor-packageName` construct**
-
 3. Install the environment
 
 ```
@@ -430,6 +492,59 @@ pixi install
 pixi run install-git
 ```
 
+5. Call the Rproj task to open the project in RStudio, with paths mounted to the cluster
+
+```
+pixi run rstudio
+```
+
+## Real Project Example in Python
+
+1. Navigate to the project directory on Discovery/Andes/Polaris. Initialize a pixi directory and provide it a name.
+
+```
+pixi init multivelo
+cd multivelo
+
+```
+
+2. Modify the `toml` by definig channels, tasks, and packages. 
+
+> [!IMPORTANT]
+> **If you want to run your python code interactively, you need to install `ipykernel` in the environment and include a task to activate the env as a kernel**
+
+```
+[workspace]
+authors = ["Mike Martinez <f007qps@dartmouth.edu>"]
+channels = ["conda-forge", "bioconda"]
+name = "multivelo"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+kernel = "python -m ipykernel install --user --name multivelo-pixi --display-name 'Python (MultiVelo Pixi)'"
+
+[dependencies]
+python = "3.11.*"
+pip = "*"
+ipykernel = "*"
+multivelo = "*"
+loompy = ">=3.0.8,<4"
+```
+
+3. Activate the pixi environment
+
+```
+pixi shell
+```
+
+4. Run the `kernel` task to register the Jupyter kernel
+
+```
+pixi run kernel
+```
+
+5. In VS Code or Jupyter, select “Python (MultiVelo Pixi)” from the available kernel list.
 
 
 
